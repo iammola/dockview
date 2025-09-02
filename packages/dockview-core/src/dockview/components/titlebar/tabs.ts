@@ -13,7 +13,7 @@ import {
 import { Scrollbar } from '../../../scrollbar';
 import { DockviewComponent } from '../../dockviewComponent';
 import { DockviewGroupPanel } from '../../dockviewGroupPanel';
-import { WillShowOverlayLocationEvent } from '../../dockviewGroupPanelModel';
+import { WillShowOverlayLocationEvent } from '../../events';
 import { DockviewPanel, IDockviewPanel } from '../../dockviewPanel';
 import { Tab } from '../tab/tab';
 import { TabDragEvent, TabDropIndexEvent } from './tabsContainer';
@@ -343,5 +343,11 @@ export class Tabs extends CompositeDisposable {
                   .map((x) => x.value.panel.id);
 
         this._onOverflowTabsChange.fire({ tabs, reset: options.reset });
+    }
+
+    updateDragAndDropState(): void {
+        for (const tab of this._tabs) {
+            tab.value.updateDragAndDropState();
+        }
     }
 }

@@ -51,8 +51,8 @@ import { Box } from '../types';
 import {
     DockviewDidDropEvent,
     DockviewWillDropEvent,
-    WillShowOverlayLocationEvent,
 } from '../dockview/dockviewGroupPanelModel';
+import { WillShowOverlayLocationEvent } from '../dockview/events';
 import {
     PaneviewComponentOptions,
     PaneviewDndOverlayEvent,
@@ -747,6 +747,10 @@ export class DockviewApi implements CommonApi<SerializedDockview> {
 
     get onDidPopoutGroupPositionChange(): Event<PopoutGroupChangePositionEvent> {
         return this.component.onDidPopoutGroupPositionChange;
+    }
+
+    get onDidOpenPopoutWindowFail(): Event<void> {
+        return this.component.onDidOpenPopoutWindowFail;
     }
 
     /**

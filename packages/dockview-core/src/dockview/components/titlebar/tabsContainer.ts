@@ -11,7 +11,7 @@ import { VoidContainer } from './voidContainer';
 import { findRelativeZIndexParent, toggleClass } from '../../../dom';
 import { IDockviewPanel } from '../../dockviewPanel';
 import { DockviewComponent } from '../../dockviewComponent';
-import { WillShowOverlayLocationEvent } from '../../dockviewGroupPanelModel';
+import { WillShowOverlayLocationEvent } from '../../events';
 import { getPanelData } from '../../../dnd/dataTransfer';
 import { Tabs } from './tabs';
 import {
@@ -55,6 +55,7 @@ export interface ITabsContainer extends IDisposable {
     setPrefixActionsElement(element: HTMLElement | undefined): void;
     show(): void;
     hide(): void;
+    updateDragAndDropState(): void;
 }
 
 export class TabsContainer
@@ -378,8 +379,13 @@ export class TabsContainer
                         !panelObject.api.isActive
                     );
 
-                    wrapper.addEventListener('pointerdown', () => {
+                    wrapper.addEventListener('click', (event) => {
                         this.accessor.popupService.close();
+
+                        if (event.defaultPrevented) {
+                            return;
+                        }
+
                         tab.element.scrollIntoView();
                         tab.panel.api.setActive();
                     });
@@ -399,5 +405,10 @@ export class TabsContainer
                 });
             })
         );
+    }
+
+    updateDragAndDropState(): void {
+        this.tabs.updateDragAndDropState();
+        this.voidContainer.updateDragAndDropState();
     }
 }

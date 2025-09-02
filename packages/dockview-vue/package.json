@@ -1,6 +1,6 @@
 {
   "name": "dockview-vue",
-  "version": "4.2.5",
+  "version": "4.7.1",
   "description": "Zero dependency layout manager supporting tabs, grids and splitviews",
   "keywords": [
     "splitview",
@@ -41,18 +41,19 @@
     "README.md"
   ],
   "scripts": {
+    "build:bundle": "echo 'noop'",
     "build:js": "vite build",
     "build:types": "vue-tsc --project tsconfig.build-types.json --declaration --emitDeclarationOnly --outDir dist/types",
     "build:css": "node scripts/copy-css.js",
     "build": "npm run build:js && npm run build:types && npm run build:css",
     "clean": "rimraf dist/ .build/ .rollup.cache/",
-    "prepublishOnly": "npm run rebuild && npm run test",
+    "prepublishOnly": "npm run rebuild && npm run build:bundle && npm run test",
     "rebuild": "npm run clean && npm run build",
     "test": "cross-env ../../node_modules/.bin/jest --selectProjects dockview-vue",
     "test:cov": "cross-env ../../node_modules/.bin/jest --selectProjects dockview-vue --coverage"
   },
   "dependencies": {
-    "dockview-core": "^4.2.5"
+    "dockview-core": "^4.7.1"
   },
   "peerDependencies": {
     "vue": "^3.4.0"

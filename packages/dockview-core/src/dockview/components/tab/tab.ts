@@ -26,9 +26,10 @@ class TabDragHandler extends DragHandler {
         element: HTMLElement,
         private readonly accessor: DockviewComponent,
         private readonly group: DockviewGroupPanel,
-        private readonly panel: IDockviewPanel
+        private readonly panel: IDockviewPanel,
+        disabled?: boolean
     ) {
-        super(element);
+        super(element, disabled);
     }
 
     getData(event: DragEvent): IDisposable {
@@ -49,6 +50,7 @@ export class Tab extends CompositeDisposable {
     private readonly _element: HTMLElement;
     private readonly dropTarget: Droptarget;
     private content: ITabRenderer | undefined = undefined;
+    private readonly dragHandler: TabDragHandler;
 
     private readonly _onPointDown = new Emitter<MouseEvent>();
     readonly onPointerDown: Event<MouseEvent> = this._onPointDown.event;
@@ -79,7 +81,7 @@ export class Tab extends CompositeDisposable {
         this._element.className = 'dv-tab';
         this._element.role = 'tab';
         this._element.tabIndex = -1;
-        this._element.draggable = true;
+        this._element.draggable = !this.accessor.options.disableDnd;
         this._element.ariaSelected = 'false';
 
         Object.entries(this.panel.tabComponentAttributes).forEach(
@@ -90,11 +92,12 @@ export class Tab extends CompositeDisposable {
 
         toggleClass(this.element, 'dv-inactive-tab', true);
 
-        const dragHandler = new TabDragHandler(
+        this.dragHandler = new TabDragHandler(
             this._element,
             this.accessor,
             this.group,
-            this.panel
+            this.panel,
+            !!this.accessor.options.disableDnd
         );
 
         this.dropTarget = new Droptarget(this._element, {
@@ -126,7 +129,7 @@ export class Tab extends CompositeDisposable {
             this._onPointDown,
             this._onDropped,
             this._onDragStart,
-            dragHandler.onDragStart((event) => {
+            this.dragHandler.onDragStart((event) => {
                 if (event.dataTransfer) {
                     const style = getComputedStyle(this.element);
                     const newNode = this.element.cloneNode(true) as HTMLElement;
@@ -146,7 +149,7 @@ export class Tab extends CompositeDisposable {
                 }
                 this._onDragStart.fire(event);
             }),
-            dragHandler,
+            this.dragHandler,
             addDisposableListener(this._element, 'pointerdown', (event) => {
                 this._onPointDown.fire(event);
             }),
@@ -174,6 +177,11 @@ export class Tab extends CompositeDisposable {
         }
         this.content = part;
         this._element.appendChild(this.content.element);
+    }
+
+    public updateDragAndDropState(): void {
+        this._element.draggable = !this.accessor.options.disableDnd;
+        this.dragHandler.setDisabled(!!this.accessor.options.disableDnd);
     }
 
     public dispose(): void {
