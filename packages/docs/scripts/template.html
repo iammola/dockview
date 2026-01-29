@@ -96,7 +96,7 @@
               </button>
             </a>
           </div>
-          <div id="app"></div>
+          <div id="app">{{appElement}}</div>
         </div>
         <script type="systemjs-module" src="import:{{app}}"></script>
         <object
@@ -114,7 +114,7 @@
         <script id="loading-script">
             (function () {
                 const cleanupLoading = () => {
-                    if (document.querySelector('.dv-dockview')) {
+                    if (document.querySelector('{{componentSelector}}')) {
                         document.querySelector('#loading-spinner').remove();
                         document.querySelector('#loading-script').remove();
                     } else {

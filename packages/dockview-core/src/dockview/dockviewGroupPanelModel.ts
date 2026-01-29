@@ -10,7 +10,7 @@ import {
     Event,
     IDockviewEvent,
 } from '../events';
-import { DockviewGroupDropLocation, WillShowOverlayLocationEvent, WillShowOverlayLocationEventOptions } from './events';
+import { DockviewGroupDropLocation, DockviewWillShowOverlayLocationEvent, DockviewWillShowOverlayLocationEventOptions } from './events';
 import { IViewSize } from '../gridview/gridview';
 import { CompositeDisposable, IDisposable } from '../lifecycle';
 import {
@@ -237,8 +237,8 @@ export class DockviewGroupPanelModel
     readonly onWillDrop: Event<DockviewWillDropEvent> = this._onWillDrop.event;
 
     private readonly _onWillShowOverlay =
-        new Emitter<WillShowOverlayLocationEvent>();
-    readonly onWillShowOverlay: Event<WillShowOverlayLocationEvent> =
+        new Emitter<DockviewWillShowOverlayLocationEvent>();
+    readonly onWillShowOverlay: Event<DockviewWillShowOverlayLocationEvent> =
         this._onWillShowOverlay.event;
 
     private readonly _onTabDragStart = new Emitter<TabDragEvent>();
@@ -441,7 +441,7 @@ export class DockviewGroupPanelModel
             }),
             this.contentContainer.dropTarget.onWillShowOverlay((event) => {
                 this._onWillShowOverlay.fire(
-                    new WillShowOverlayLocationEvent(event, {
+                    new DockviewWillShowOverlayLocationEvent(event, {
                         kind: 'content',
                         panel: this.activePanel,
                         api: this._api,
@@ -906,9 +906,14 @@ export class DockviewGroupPanelModel
         if (panel) {
             this.tabsContainer.setActivePanel(panel);
 
+            this.contentContainer.openPanel(panel);
+
             panel.layout(this._width, this._height);
 
             this.updateMru(panel);
+
+            // Refresh focus state to handle programmatic activation without DOM focus change
+            this.contentContainer.refreshFocusState();
 
             this._onDidActivePanelChange.fire({
                 panel,

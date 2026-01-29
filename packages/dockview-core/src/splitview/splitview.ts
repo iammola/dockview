@@ -563,6 +563,7 @@ export class Splitview {
                     document.removeEventListener('pointermove', onPointerMove);
                     document.removeEventListener('pointerup', end);
                     document.removeEventListener('pointercancel', end);
+                    document.removeEventListener('contextmenu', end);
 
                     this._onDidSashEnd.fire(undefined);
                 };
@@ -570,6 +571,7 @@ export class Splitview {
                 document.addEventListener('pointermove', onPointerMove);
                 document.addEventListener('pointerup', end);
                 document.addEventListener('pointercancel', end);
+                document.addEventListener('contextmenu', end);
             };
 
             sash.addEventListener('pointerdown', onPointerStart);
