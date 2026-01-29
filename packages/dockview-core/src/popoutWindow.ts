@@ -140,8 +140,6 @@ export class PopoutWindow extends CompositeDisposable {
 
                     externalDocument.body.appendChild(container);
 
-                    addStyles(externalDocument, window.document.styleSheets);
-
                     /**
                      * beforeunload must be registered after load for reasons I could not determine
                      * otherwise the beforeunload event will not fire when the window is closed
